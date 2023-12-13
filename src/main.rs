@@ -10,7 +10,7 @@ use crate::polynomial_object::PolyEquat;
 use crate::factoring_and_primes::our_factor;
 
 
-// Defines the type of the coefficients of the polynomial
+// This file is set up ready for you to use as you wish. It can be ignored if you wish you just use the objects created in the other files.
 
 fn main() {
 
