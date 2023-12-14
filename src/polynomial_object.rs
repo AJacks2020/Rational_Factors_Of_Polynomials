@@ -2,18 +2,41 @@ use crate::factoring_and_primes::our_factor;
 
 
 pub struct PolyEquat{
+    // Struct to specify a polynomial by the coefficients of each term as a vector of i32 variables. 
+    // The order is defined by the length of the vector 
     pub polynomial_coefficients: Vec<i32>
 }
 
 impl PolyEquat{
-
+    
     pub fn new(input_coeffs: Vec<i32>) -> Self {
+        /* 
+        Simple constructor to build a new PolyEquat struct
+
+        INPUTS:
+            input_coeffs : a vectors of integers (as i32) specifying the polynomial : Vec<i32>
+            
+        OUTPUTS:
+            A PolyEquat object as specified
+
+        */
         Self {
             polynomial_coefficients: input_coeffs
         }
     }
 
     pub fn horner_eval(&self, value: f64) -> f64 {
+        /* 
+        An associated function to evaulate the polynomial corresponding the current PolyEquat object at a specified value.
+        This is done using Horner's rule for efficiency.
+        
+        INPUTS:
+            self : the current PolyEquat object specifying a polynomial : PolyEquat Object
+            value : the value to evaluate the specified polynomial at : f64
+            
+        OUTPUTS:
+           the value the specified polynomial takes at the specified value : f64
+        */
 
         let mut current_polynomial_value: f64 = 0.0;
 
@@ -27,7 +50,19 @@ impl PolyEquat{
 
 
     pub fn rational_solve(&self) -> Vec<Vec<i32>> {
+        /* 
+        An associated function to find the rational roots of the specified polynomial using the Rational Root Theorem.
+        
+        INPUTS:
+            self : the current PolyEquat object specifying a polynomial : PolyEquat Object
+            
+        OUTPUTS:
+           the rational roots of the specified polynomial each element of the output vector specifies a   : Vec<Vec<i32>>
+           single root and is a vector of i32.
+           The vector representing a single root is a double consisting of the numberator and denominator of the root.
+        */
 
+        // Specifies the error allowed when - and only when - testing if obtained values are correct
         let allowed_tolerance: f64 = 0.000001; 
 
 
@@ -41,9 +76,7 @@ impl PolyEquat{
         poss_qs.sort_unstable();
         poss_qs.dedup();
 
-        // Add in a quick check that the factors make sense!!!
-        // Panic if they don't
-
+        // Constructs a vector of possible roots
         let mut poss_rational_sols: Vec<Vec<i32>> = vec![];
         for numerator in &poss_ps {
             for denominator in &poss_qs {
@@ -51,34 +84,35 @@ impl PolyEquat{
                 poss_rational_sols.push(vec![-1 * *numerator, *denominator]);
             }
         }
-        
-        // seems to be empty at this point
 
-        // Tries the correct solutions to see which gives the correct solution
+        // Tries the possible solutions - constructed above - to see which gives the correct solution
         let mut known_rational_sols: Vec<Vec<i32>> = vec![];
         for poss_solution in poss_rational_sols {
             let mut curr_test_sol:f64 = poss_solution[0] as f64 / poss_solution[1] as f64;
 
+            // If the value of the polynomial at the root is adequetely close to 0, adds it to the set of solutions.
             if PolyEquat::horner_eval(&self, curr_test_sol) < allowed_tolerance {
                 known_rational_sols.push(poss_solution);
             }
         }
 
+        // Returns all the obtained rational roots of the polynomial
         return known_rational_sols;
     }
-
-
 }
 
 
-
-// JUST TESTS FROM HERE ON DOWN
+/*
+    TESTING STARTS FROM HERE
+        There is nothing else but tests from here on down.
+        Tests are a sporatic sample that were mostly used to drive test-driven development.
+        No guarantees are given this code with function correctly.
+*/
 
 
 #[cfg(test)]
 mod tests {
     use crate::PolyEquat;
-
     /*
         Tests of the new associated function of PolyEquat
     */
